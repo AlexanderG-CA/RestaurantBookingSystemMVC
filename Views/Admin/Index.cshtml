@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2>Admin Dashboard</h2>
+        <p>Welcome, @User.Identity?.Name. Use the links below to manage the restaurant's data.</p>
+        <div class="list-group">
+            <a asp-controller="Admin" asp-action="Dishes" class="list-group-item list-group-item-action">Manage Dishes</a>
+            <a asp-controller="Admin" asp-action="Bookings" class="list-group-item list-group-item-action">Manage Bookings</a>
+            <a asp-controller="Admin" asp-action="Tables" class="list-group-item list-group-item-action">Manage Tables</a>
+        </div>
+    </div>
+</div>

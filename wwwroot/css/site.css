@@ -1,0 +1,27 @@
+/* Custom site styles for Tumba Bistro */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #faf9f7;
+    color: #333;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Segoe UI Semibold', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: 700;
+}
+
+.card-title {
+    font-weight: 600;
+}
+
+.card {
+    border: none;
+}
+
+.card img {
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+}

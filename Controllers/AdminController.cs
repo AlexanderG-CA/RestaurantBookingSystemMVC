@@ -2,12 +2,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantWebsite.Models;
 using RestaurantWebsite.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace RestaurantWebsite.Controllers
 {
     /// <summary>
     /// Provides an administrator interface for managing dishes, bookings and tables.
-    /// All actions in this controller require authentication.
+    /// All actions in this controller require authentication except those explicitly marked with AllowAnonymous.
     /// </summary>
     [Authorize]
     public class AdminController : Controller
@@ -142,6 +146,75 @@ namespace RestaurantWebsite.Controllers
             await _apiService.DeleteTableAsync(id, token);
             return RedirectToAction(nameof(Tables));
         }
+        #endregion
+
+        #region React Admin Endpoints
+
+        /// <summary>
+        /// Serves the React-based admin dashboard.
+        /// </summary>
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult React()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Authenticates an administrator via the API and stores the JWT in session.
+        /// Also issues an MVC authentication cookie.
+        /// </summary>
+        [HttpPost]
+        [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> LoginApi([FromBody] LoginRequest model)
+        {
+            var authResponse = await _apiService.LoginAsync(model);
+            if (authResponse == null)
+            {
+                return Unauthorized();
+            }
+
+            // Save token in session
+            HttpContext.Session.SetString("JwtToken", authResponse.Token);
+
+            // Issue cookie
+            var claims = new List<Claim> { new Claim(ClaimTypes.Name, model.Username) };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = authResponse.Expires.ToUniversalTime()
+            };
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Returns bookings in JSON for the React admin dashboard.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> BookingsJson()
+        {
+            var token = GetToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+            var bookings = await _apiService.GetBookingsDetailedAsync(token) ?? new List<Booking>();
+            return Json(bookings);
+        }
+
+        /// <summary>
+        /// Deletes a booking and returns OK for the React admin dashboard.
+        /// </summary>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteBookingJson(int id)
+        {
+            var token = GetToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+            await _apiService.DeleteBookingAsync(id, token);
+            return Ok();
+        }
+
         #endregion
     }
 }

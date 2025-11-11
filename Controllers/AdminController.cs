@@ -79,6 +79,7 @@ namespace RestaurantWebsite.Controllers
         #endregion
 
         #region Bookings Management
+
         public async Task<IActionResult> Bookings()
         {
             var token = GetToken();
@@ -94,7 +95,93 @@ namespace RestaurantWebsite.Controllers
             await _apiService.DeleteBookingAsync(id, token);
             return RedirectToAction(nameof(Bookings));
         }
+
+        public async Task<IActionResult> EditBooking(int id)
+        {
+            string? token = GetToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+
+            // Fetch the booking details (including Customer and Table info)
+            Booking? booking = await _apiService.GetBookingAsync(id, token);
+            if (booking == null)
+            {
+                return NotFound($"Booking ID {id} not found.");
+            }
+
+            // Fetch all tables and filter those that can accommodate the current number of guests
+            var allTables = await _apiService.GetTablesAsync(token) ?? new List<Table>();
+            var suitableTables = allTables.Where(t => t.Capacity >= booking.NumberOfGuests).ToList();
+
+            // Package into a view model
+            var viewModel = new EditBookingViewModel
+            {
+                Booking = booking,
+                Tables = suitableTables
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditBooking(Booking booking)
+        {
+            string? token = GetToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+
+            if (!ModelState.IsValid)
+            {
+                var allTables = await _apiService.GetTablesAsync(token) ?? new List<Table>();
+                var suitableTables = allTables.Where(t => t.Capacity >= booking.NumberOfGuests).ToList();
+                var vm = new EditBookingViewModel { Booking = booking, Tables = suitableTables };
+                return View(vm);
+            }
+
+            bool success = await _apiService.UpdateBookingAsync(booking, token);
+            if (!success)
+            {
+                ModelState.AddModelError(string.Empty, "Updating the booking failed. Please try again.");
+                var allTables = await _apiService.GetTablesAsync(token) ?? new List<Table>();
+                var suitableTables = allTables.Where(t => t.Capacity >= booking.NumberOfGuests).ToList();
+                var vm = new EditBookingViewModel { Booking = booking, Tables = suitableTables };
+                return View(vm);
+            }
+
+            return RedirectToAction(nameof(Bookings));
+        }
+
+
+
+        // GET: Show form
+        [HttpGet]
+        public IActionResult CreateBooking()
+        {
+            return View(new BookingRequest());
+        }
+
+        // POST: Submit form
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateBooking(BookingRequest model)
+        {
+            var token = GetToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var success = await _apiService.CreateBookingAsync(model, token);
+            if (!success)
+            {
+                ModelState.AddModelError("", "Failed to create booking.");
+                return View(model);
+            }
+
+            return RedirectToAction(nameof(Bookings));
+        }
+
         #endregion
+
 
         #region Table Management
         public async Task<IActionResult> Tables()

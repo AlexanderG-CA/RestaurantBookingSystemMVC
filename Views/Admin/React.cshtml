@@ -2,13 +2,18 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<h2>Administrator Panel</h2>
-
-<div id="admin-app"></div>
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card p-4 shadow-sm">
+            <h2 class="mb-4">Administrator Panel</h2>
+            <div id="admin-app"></div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script type="text/babel" src="~/js/admin.jsx"></script>
 }

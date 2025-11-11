@@ -3,22 +3,29 @@
     ViewData["Title"] = "Add Table";
 }
 
-<h2>Add Table</h2>
-
-<form asp-action="CreateTable" method="post">
-    <div class="mb-3">
-        <label asp-for="TableNumber" class="form-label"></label>
-        <input asp-for="TableNumber" class="form-control" />
-        <span asp-validation-for="TableNumber" class="text-danger"></span>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="mb-4">Add Table</h2>
+                <form asp-action="CreateTable" method="post">
+                    <div class="mb-3">
+                        <label asp-for="TableNumber" class="form-label"></label>
+                        <input asp-for="TableNumber" class="form-control" />
+                        <span asp-validation-for="TableNumber" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Capacity" class="form-label"></label>
+                        <input asp-for="Capacity" class="form-control" />
+                        <span asp-validation-for="Capacity" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <a asp-action="Tables" class="btn btn-secondary ms-2">Cancel</a>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="Capacity" class="form-label"></label>
-        <input asp-for="Capacity" class="form-control" />
-        <span asp-validation-for="Capacity" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Create</button>
-    <a asp-action="Tables" class="btn btn-secondary ms-2">Cancel</a>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

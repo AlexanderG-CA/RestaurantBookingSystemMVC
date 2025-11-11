@@ -1,7 +1,8 @@
+using RestaurantWebsite.Models;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using RestaurantWebsite.Models;
+using System.Text.Json.Serialization;
 
 namespace RestaurantWebsite.Services
 {
@@ -92,6 +93,7 @@ namespace RestaurantWebsite.Services
             var json = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<Booking>(json, SerializerOptions);
         }
+
 
         /// <summary>
         /// Creates a new dish. Requires a JWT for authorization.
@@ -215,12 +217,42 @@ namespace RestaurantWebsite.Services
         /// </summary>
         public async Task<bool> UpdateBookingAsync(Booking booking, string token)
         {
-            using var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"api/bookings/{booking.Id}");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            requestMessage.Content = new StringContent(JsonSerializer.Serialize(booking), Encoding.UTF8, "application/json");
-            var response = await _client.SendAsync(requestMessage);
+            var payload = new
+            {
+                id = booking.Id,
+                bookingDate = booking.BookingDate,
+                startTime = booking.StartTime,
+                numberOfGuests = booking.NumberOfGuests,
+                tableId = booking.TableId,
+                customer = new
+                {
+                    id = booking.CustomerId,
+                    name = booking.Customer?.Name,
+                    phoneNumber = booking.Customer?.PhoneNumber
+                }
+            };
+
+            var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            });
+
+            Console.WriteLine("[DEBUG] Payload JSON: " + json);
+
+            using var request = new HttpRequestMessage(HttpMethod.Put, $"api/bookings/{booking.Id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _client.SendAsync(request);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"[DEBUG] Status: {response.StatusCode}, Body: {responseBody}");
+
             return response.IsSuccessStatusCode;
         }
+
+
+
 
         /// <summary>
         /// Deletes a booking. Requires a JWT.

@@ -1,64 +1,60 @@
 @model RestaurantWebsite.Models.EditBookingViewModel
-
 @{
     ViewData["Title"] = "Edit Booking";
 }
-
 <div class="container mt-4">
     <h2>Edit Booking</h2>
     <form asp-action="EditBooking" method="post" class="mt-3">
         @Html.AntiForgeryToken()
         @Html.HiddenFor(model => model.Booking.Id)
         @Html.HiddenFor(model => model.Booking.CustomerId)
-        @Html.HiddenFor(model => model.Booking.TableId)
 
         <input asp-for="Booking.Customer.Id" type="hidden" />
-        <input asp-for="Booking.TableId" type="hidden" /> <!-- For fallback if dropdown fails -->
 
         <div class="mb-3">
             <label asp-for="Booking.BookingDate" class="form-label">Date</label>
             <input asp-for="Booking.BookingDate" class="form-control" type="date" />
             <span asp-validation-for="Booking.BookingDate" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
             <label asp-for="Booking.StartTime" class="form-label">Start Time</label>
             <input asp-for="Booking.StartTime" class="form-control" type="time" />
             <span asp-validation-for="Booking.StartTime" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
             <label asp-for="Booking.NumberOfGuests" class="form-label">Guests</label>
             <input asp-for="Booking.NumberOfGuests" class="form-control" type="number" min="1" />
             <span asp-validation-for="Booking.NumberOfGuests" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
             <label asp-for="Booking.TableId" class="form-label">Table</label>
-            <select asp-for="Booking.TableId" class="form-select" asp-items="@(new SelectList(Model.Tables, "Id", "TableNumber", Model.Booking.TableId))">
+            <select asp-for="Booking.TableId" class="form-select" id="tableSelect">
                 <option value="">-- Select Table --</option>
+                @foreach (var table in Model.Tables)
+                {
+                    <option value="@table.Id"
+                            data-capacity="@table.Capacity"
+                            selected="@(table.Id == Model.Booking.TableId)">
+                        Table @table.TableNumber (Capacity: @table.Capacity)
+                    </option>
+                }
             </select>
             <span asp-validation-for="Booking.TableId" class="text-danger"></span>
         </div>
-
         <div class="mb-3">
             <label class="form-label">Customer Name</label>
             <input asp-for="Booking.Customer.Name" class="form-control" readonly />
         </div>
-
         <div class="mb-3">
             <label class="form-label">Customer Phone</label>
             <input asp-for="Booking.Customer.PhoneNumber" class="form-control" readonly />
         </div>
-
         <button type="submit" class="btn btn-primary">Save Changes</button>
         <a asp-action="Bookings" class="btn btn-secondary ms-2">Cancel</a>
     </form>
 </div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
     <script>
         const guestInput = document.getElementById('Booking_NumberOfGuests');
         const tableSelect = document.getElementById('tableSelect');
@@ -66,6 +62,7 @@
         guestInput.addEventListener('input', function () {
             const guestCount = parseInt(this.value || "0");
             for (let opt of tableSelect.options) {
+                if (opt.value === "") continue; // Skip the placeholder option
                 const cap = parseInt(opt.getAttribute('data-capacity') || "0");
                 opt.hidden = (cap > 0 && guestCount > 0 && cap < guestCount);
             }

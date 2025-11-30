@@ -2,11 +2,22 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 using RestaurantWebsite.Models;
 using RestaurantWebsite.Services;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Logging (handy to see the BaseUrl used at startup)
 builder.Logging.AddConsole();
+
+// Configure culture for proper decimal binding (fixes Price field issues)
+var supportedCultures = new[] { new CultureInfo("en-US") };
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("en-US");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
 
 // MVC
 builder.Services.AddControllersWithViews();
@@ -54,6 +65,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // NOTE: No need for AddScoped<ApiService>() because AddHttpClient already registers it.
 
 var app = builder.Build();
+
+// Use request localization (ensures proper decimal binding)
+app.UseRequestLocalization();
 
 // HTTPS redirect (useful if your API runs on https)
 app.UseHttpsRedirection();

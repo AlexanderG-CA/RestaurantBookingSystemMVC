@@ -3,43 +3,65 @@
     ViewData["Title"] = "Home";
 }
 
-<!-- Hero section -->
-<div class="row mb-4">
-    <div class="col-12">
-        <img src="~/images/landing.png" alt="Landing" class="img-fluid w-75 h-75 d-block mx-auto" />
+<!-- Hero Banner Section - Will be full width on desktop via CSS -->
+<div class="hero-banner-section mb-5">
+    <img src="~/images/Tumba Bistro.png" alt="Tumba Bistro - Café & Gastro" class="hero-banner-img" />
+    <div class="banner-cta-overlay">
+        <div class="banner-cta-buttons">
+            <a class="btn btn-light btn-lg shadow" asp-controller="Menu" asp-action="Index">
+                View Menu
+            </a>
+            <a class="btn btn-outline-light btn-lg shadow" asp-controller="Home" asp-action="Booking">
+                Book a Table
+            </a>
+        </div>
     </div>
 </div>
 
-<div class="text-center mb-4">
-    <h1 class="display-4">Welcome to Tumba Bistro</h1>
-    <p class="lead">Enjoy our Swedish café with rustic charm and Heavenly pastries.</p>
+<!-- Welcome Section -->
+<div class="container text-center mb-5">
+    <h2 class="display-5 mb-3">Welcome to Tumba Bistro</h2>
+    <p class="lead text-muted">Enjoy our Swedish café with rustic charm and Heavenly pastries.</p>
 </div>
 
-<h2 class="mb-3">Popular Dishes</h2>
-<div class="row">
-    @foreach (var dish in Model.Take(3))
-    {
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                @if (!string.IsNullOrEmpty(dish.ImageUrl))
-                {
-                    <img src="@dish.ImageUrl" class="card-img-top" alt="@dish.Name" style="object-fit: cover; height: 200px;" />
-                }
-                else
-                {
-                    <img src="~/images/menu.png" class="card-img-top" alt="@dish.Name" style="object-fit: cover; height: 200px;" />
-                }
-                <div class="card-body">
-                    <h5 class="card-title">@dish.Name</h5>
-                    <p class="card-text">@dish.Description</p>
-                    <span class="badge bg-success">@dish.Price.ToString("F2") $USD</span>
+<!-- Popular Dishes Section -->
+<div class="container">
+    <div class="text-center mb-4">
+        <h2 class="display-6 mb-3">Popular Dishes</h2>
+        <p class="text-muted">Taste our customer favorites</p>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var dish in Model.Take(3))
+        {
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm dish-card">
+                    @if (!string.IsNullOrEmpty(dish.ImageUrl))
+                    {
+                        <img src="@dish.ImageUrl" class="card-img-top dish-image" alt="@dish.Name" />
+                    }
+                    else
+                    {
+                        <img src="~/images/menu.png" class="card-img-top dish-image" alt="@dish.Name" />
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@dish.Name</h5>
+                        <p class="card-text flex-grow-1">@dish.Description</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="badge bg-success fs-6">@dish.Price.ToString("F2") $USD</span>
+                            <span class="badge bg-warning text-dark">Popular</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center mt-5 mb-4">
+        <a class="btn btn-primary btn-lg px-5" asp-controller="Menu" asp-action="Index">
+            Explore Full Menu
+        </a>
+    </div>
 </div>
 
-<div class="mt-3">
-    <a class="btn btn-primary" asp-controller="Menu" asp-action="Index">View Full Menu</a>
-    <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Contact">Book a Table</a>
-</div>

@@ -48,41 +48,48 @@ namespace RestaurantWebsite.Controllers
                 return View(model);
             }
 
-            var result = await _apiService.GetAvailableTablesAsync(model.BookingDate, model.StartTime, model.NumberOfGuests);
+            var result = await _apiService.GetAvailableTablesAsync(
+                model.BookingDate,
+                model.StartTime,
+                model.NumberOfGuests,
+                includeUnavailable: false);
+
             if (result.HasValue)
             {
                 var list = new List<Table>();
                 try
                 {
-                    // The API returns a JSON object. We expect a property called
-                    // "availableTables" containing an array of tables. Deserialize
-                    // each element into a Table instance.
-                    if (result.Value.TryGetProperty("availableTables", out var tablesEl))
+                    // API returns an array of table objects directly
+                    foreach (var el in result.Value.EnumerateArray())
                     {
-                        foreach (var el in tablesEl.EnumerateArray())
+                        // Only add tables that are available
+                        if (el.TryGetProperty("isAvailable", out var isAvailableEl)
+                            && isAvailableEl.GetBoolean())
                         {
-                            var table = JsonSerializer.Deserialize<Table>(el.GetRawText(), new JsonSerializerOptions
+                            var table = new Table
                             {
-                                PropertyNameCaseInsensitive = true
-                            });
-                            if (table != null)
-                            {
-                                list.Add(table);
-                            }
+                                Id = el.GetProperty("id").GetInt32(),
+                                TableNumber = el.GetProperty("tableNumber").GetInt32(),
+                                Capacity = el.GetProperty("capacity").GetInt32()
+                            };
+                            list.Add(table);
                         }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // If the API response shape changes or cannot be parsed,
-                    // we simply leave the list empty. The view will handle this.
+                    // Log the error
+                    Console.WriteLine($"Error parsing availability: {ex.Message}");
+                    ModelState.AddModelError("", "Failed to retrieve available tables. Please try again.");
                 }
                 model.AvailableTables = list;
             }
             else
             {
                 model.AvailableTables = new List<Table>();
+                ModelState.AddModelError("", "Unable to check availability. Please try again.");
             }
+
             return View(model);
         }
     }

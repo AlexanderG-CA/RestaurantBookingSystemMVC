@@ -48,10 +48,30 @@ namespace RestaurantWebsite.Controllers
         {
             var token = GetToken();
             if (string.IsNullOrEmpty(token)) return Unauthorized();
-            await _apiService.CreateDishAsync(model, token);
-            return RedirectToAction(nameof(Dishes));
-        }
 
+            // Check if model is valid
+            if (!ModelState.IsValid)
+            {
+                // Return to view with validation errors
+                return View(model);
+            }
+
+            try
+            {
+                var success = await _apiService.CreateDishAsync(model, token);
+                if (!success)
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to create dish. Please try again.");
+                    return View(model);
+                }
+                return RedirectToAction(nameof(Dishes));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                return View(model);
+            }
+        }
         public async Task<IActionResult> EditDish(int id)
         {
             var dish = await _apiService.GetDishAsync(id);

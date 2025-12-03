@@ -1016,3 +1016,33 @@ main.flex-grow-1 {
         font-size: 0.8rem;
     }
 }
+
+/* ===========================
+   MENU PAGE DROPDOWN FIX
+   =========================== */
+
+/* Allow dropdown to overflow the card container */
+.menu-page .card {
+    overflow: visible !important;
+}
+
+.menu-page .card-body {
+    overflow: visible !important;
+}
+
+/* Ensure dropdown menu appears above other content */
+.menu-page .dropdown-menu {
+    position: absolute;
+    z-index: 1000;
+    min-width: 200px;
+}
+
+/* Position dropdown correctly */
+.menu-page .dropdown {
+    position: relative;
+}
+
+/* Make sure the form doesn't clip the dropdown */
+.menu-page form {
+    overflow: visible !important;
+}

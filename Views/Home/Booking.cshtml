@@ -2,7 +2,7 @@
     ViewData["Title"] = "Book a Table";
 }
 
-<h2>Book a table</h2>
+<link rel="stylesheet" href="~/css/booking.css" />
 
 <div id="booking-app"></div>
 
@@ -10,5 +10,15 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script type="text/babel" src="~/js/booking.jsx"></script>
+
+    <!-- Load all booking components -->
+    <script type="text/babel" data-type="module" src="~/js/booking/BookingContext.jsx"></script>
+    <script type="text/babel" data-type="module" src="~/js/booking/components/LoadingSpinner.jsx"></script>
+    <script type="text/babel" data-type="module" src="~/js/booking/components/ErrorMessage.jsx"></script>
+    <script type="text/babel" data-type="module" src="~/js/booking/components/StepIndicator.jsx"></script>
+    <script type="text/babel" data-type="module" src="~/js/booking/components/DateTimeStep.jsx"></script>
+    <script type="text/babel" data-type="module" src="~/js/booking/components/TableSelectionStep.jsx"></script>
+    <script type="text/babel" data-type="module" src="~/js/booking/components/ContactInfoStep.jsx"></script>
+    <script type="text/babel" data-type="module" src="~/js/booking/components/ConfirmationStep.jsx"></script>
+    <script type="text/babel" data-type="module" src="~/js/booking/BookingApp.jsx"></script>
 }

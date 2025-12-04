@@ -64,7 +64,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 // NOTE: No need for AddScoped<ApiService>() because AddHttpClient already registers it.
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 var app = builder.Build();
+app.UseCors("AllowReactApp");
 
 // Use request localization (ensures proper decimal binding)
 app.UseRequestLocalization();

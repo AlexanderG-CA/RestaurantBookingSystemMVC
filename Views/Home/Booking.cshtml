@@ -2,23 +2,66 @@
     ViewData["Title"] = "Book a Table";
 }
 
-<link rel="stylesheet" href="~/css/booking.css" />
+<div id="root"></div>
 
-<div id="booking-app"></div>
+<!-- Vite Dev Server Scripts -->
+<script type="module">
+    // Error handling
+    window.addEventListener('error', (e) => {
+        console.error('Page Error:', e.message);
+        const root = document.getElementById('root');
+        if (root && !root.hasChildNodes()) {
+            root.innerHTML = `
+                <div style="padding: 40px; text-align: center; color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; margin: 20px;">
+                    <h2> React App Failed to Load</h2>
+                    <p><strong>Error:</strong> ${e.message}</p>
+                    <hr style="margin: 20px 0;">
+                    <h3>Troubleshooting Steps:</h3>
+                    <ol style="text-align: left; display: inline-block; margin: 20px auto;">
+                        <li>Make sure Vite dev server is running at <strong>http://localhost:3000</strong></li>
+                        <li>In PowerShell, run:<br><code style="background: #fff; padding: 5px; display: block; margin: 5px 0;">cd ClientApp</code><code style="background: #fff; padding: 5px; display: block;">npm run dev</code></li>
+                        <li>Refresh this page after starting Vite server</li>
+                    </ol>
+                </div>
+            `;
+        }
+    });
+
+    // Check if Vite server is accessible
+    fetch('http://localhost:3000/@@vite/client')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Vite server not responding');
+            }
+            console.log(' Vite server is running');
+        })
+        .catch(err => {
+            console.error(' Cannot connect to Vite server:', err);
+            const root = document.getElementById('root');
+            if (root) {
+                root.innerHTML = `
+                    <div style="padding: 40px; text-align: center; color: #856404; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; margin: 20px;">
+                        <h2> Vite Dev Server Not Running</h2>
+                        <p>The React development server is not accessible at <strong>http://localhost:3000</strong></p>
+                        <hr style="margin: 20px 0;">
+                        <h3>To fix this:</h3>
+                        <ol style="text-align: left; display: inline-block; margin: 20px auto;">
+                            <li>Open PowerShell</li>
+                            <li>Navigate to ClientApp:<br><code style="background: #fff; padding: 5px; display: block; margin: 5px 0;">cd C:\\Users\\Alexa\\source\\repos\\RestaurantBookingSystemMVC\\ClientApp</code></li>
+                            <li>Start Vite:<br><code style="background: #fff; padding: 5px; display: block; margin: 5px 0;">npm run dev</code></li>
+                            <li>Refresh this page</li>
+                        </ol>
+                    </div>
+                `;
+            }
+        });
+</script>
+
+<script type="module" src="http://localhost:3000/@@vite/client"></script>
+<script type="module" src="http://localhost:3000/src/main.jsx"></script>
 
 @section Scripts {
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-
-    <!-- Load all booking components -->
-    <script type="text/babel" data-type="module" src="~/js/booking/BookingContext.jsx"></script>
-    <script type="text/babel" data-type="module" src="~/js/booking/components/LoadingSpinner.jsx"></script>
-    <script type="text/babel" data-type="module" src="~/js/booking/components/ErrorMessage.jsx"></script>
-    <script type="text/babel" data-type="module" src="~/js/booking/components/StepIndicator.jsx"></script>
-    <script type="text/babel" data-type="module" src="~/js/booking/components/DateTimeStep.jsx"></script>
-    <script type="text/babel" data-type="module" src="~/js/booking/components/TableSelectionStep.jsx"></script>
-    <script type="text/babel" data-type="module" src="~/js/booking/components/ContactInfoStep.jsx"></script>
-    <script type="text/babel" data-type="module" src="~/js/booking/components/ConfirmationStep.jsx"></script>
-    <script type="text/babel" data-type="module" src="~/js/booking/BookingApp.jsx"></script>
+    <script>
+        console.log('Booking page loaded - waiting for React app...');
+    </script>
 }

@@ -1,8 +1,7 @@
-﻿import { useBooking } from '../BookingContext.js';
-import { LoadingSpinner } from './LoadingSpinner.jsx';
-import { ErrorMessage } from './ErrorMessage.jsx';
-
-const { useState } = React;
+import { useState } from 'react';
+import { useBooking } from '../context/BookingContext';
+import { LoadingSpinner } from './LoadingSpinner';
+import { ErrorMessage } from './ErrorMessage';
 
 export function DateTimeStep() {
     const {
@@ -20,7 +19,6 @@ export function DateTimeStep() {
     const [localTime, setLocalTime] = useState(bookingData.time);
     const [localGuests, setLocalGuests] = useState(bookingData.guests);
 
-    // Get today's date in YYYY-MM-DD format for min attribute
     const today = new Date().toISOString().split('T')[0];
 
     const handleCheckAvailability = async () => {
@@ -55,7 +53,6 @@ export function DateTimeStep() {
                 return;
             }
 
-            // Update booking data and move to next step
             updateBookingData({
                 date: localDate,
                 time: localTime,
@@ -71,81 +68,68 @@ export function DateTimeStep() {
     };
 
     if (loading) {
-        return React.createElement(LoadingSpinner, { message: 'Checking availability...' });
+        return <LoadingSpinner message="Checking availability..." />;
     }
 
-    return React.createElement(
-        'div',
-        { className: 'booking-step' },
-        React.createElement('h2', { className: 'step-title' }, 'Select Date & Time'),
-        React.createElement('p', { className: 'step-description' }, 'Choose when you\'d like to visit us'),
-        React.createElement(ErrorMessage, { message: error, onDismiss: () => setError(null) }),
-        React.createElement(
-            'div',
-            { className: 'booking-form' },
-            React.createElement(
-                'div',
-                { className: 'form-group' },
-                React.createElement('label', { htmlFor: 'date' },
-                    React.createElement('i', { className: 'bi bi-calendar3 me-2' }),
-                    'Date'
-                ),
-                React.createElement('input', {
-                    type: 'date',
-                    id: 'date',
-                    className: 'form-control',
-                    value: localDate,
-                    min: today,
-                    onChange: (e) => setLocalDate(e.target.value)
-                })
-            ),
-            React.createElement(
-                'div',
-                { className: 'form-group' },
-                React.createElement('label', { htmlFor: 'time' },
-                    React.createElement('i', { className: 'bi bi-clock me-2' }),
-                    'Time'
-                ),
-                React.createElement('input', {
-                    type: 'time',
-                    id: 'time',
-                    className: 'form-control',
-                    value: localTime,
-                    onChange: (e) => setLocalTime(e.target.value)
-                })
-            ),
-            React.createElement(
-                'div',
-                { className: 'form-group' },
-                React.createElement('label', { htmlFor: 'guests' },
-                    React.createElement('i', { className: 'bi bi-people me-2' }),
-                    'Number of Guests'
-                ),
-                React.createElement('input', {
-                    type: 'number',
-                    id: 'guests',
-                    className: 'form-control',
-                    value: localGuests,
-                    min: 1,
-                    max: 20,
-                    onChange: (e) => setLocalGuests(e.target.value)
-                })
-            ),
-            React.createElement(
-                'div',
-                { className: 'step-actions' },
-                React.createElement(
-                    'button',
-                    {
-                        type: 'button',
-                        className: 'btn btn-primary btn-lg',
-                        onClick: handleCheckAvailability,
-                        disabled: !localDate || !localTime
-                    },
-                    'Check Availability ',
-                    React.createElement('i', { className: 'bi bi-arrow-right' })
-                )
-            )
-        )
+    return (
+        <div className="booking-step">
+            <h2 className="step-title">Select Date & Time</h2>
+            <p className="step-description">Choose when you'd like to visit us</p>
+            <ErrorMessage message={error} onDismiss={() => setError(null)} />
+            <div className="booking-form">
+                <div className="form-group">
+                    <label htmlFor="date">
+                        <i className="bi bi-calendar3 me-2"></i>
+                        Date
+                    </label>
+                    <input
+                        type="date"
+                        id="date"
+                        className="form-control"
+                        value={localDate}
+                        min={today}
+                        onChange={(e) => setLocalDate(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="time">
+                        <i className="bi bi-clock me-2"></i>
+                        Time
+                    </label>
+                    <input
+                        type="time"
+                        id="time"
+                        className="form-control"
+                        value={localTime}
+                        onChange={(e) => setLocalTime(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="guests">
+                        <i className="bi bi-people me-2"></i>
+                        Number of Guests
+                    </label>
+                    <input
+                        type="number"
+                        id="guests"
+                        className="form-control"
+                        value={localGuests}
+                        min={1}
+                        max={20}
+                        onChange={(e) => setLocalGuests(e.target.value)}
+                    />
+                </div>
+                <div className="step-actions">
+                    <button
+                        type="button"
+                        className="btn btn-primary btn-lg"
+                        onClick={handleCheckAvailability}
+                        disabled={!localDate || !localTime}
+                    >
+                        Check Availability <i className="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 }

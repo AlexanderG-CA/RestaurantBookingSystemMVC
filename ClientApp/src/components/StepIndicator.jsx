@@ -1,4 +1,4 @@
-﻿import { useBooking } from '../BookingContext.js';
+import { useBooking } from '../context/BookingContext';
 
 export function StepIndicator() {
     const { currentStep } = useBooking();
@@ -10,43 +10,27 @@ export function StepIndicator() {
         { number: 4, label: 'Confirmation' }
     ];
 
-    return React.createElement(
-        'div',
-        { className: 'step-indicator-container' },
-        React.createElement(
-            'div',
-            { className: 'step-indicator' },
-            steps.map((step, index) =>
-                React.createElement(
-                    React.Fragment,
-                    { key: step.number },
-                    React.createElement(
-                        'div',
-                        {
-                            className: `step-item ${currentStep === step.number ? 'active' : ''} ${currentStep > step.number ? 'completed' : ''}`
-                        },
-                        React.createElement(
-                            'div',
-                            { className: 'step-circle' },
-                            currentStep > step.number
-                                ? React.createElement('i', { className: 'bi bi-check' })
-                                : step.number
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'step-label' },
-                            step.label
-                        )
-                    ),
-                    index < steps.length - 1 &&
-                    React.createElement(
-                        'div',
-                        {
-                            className: `step-line ${currentStep > step.number ? 'completed' : ''}`
-                        }
-                    )
-                )
-            )
-        )
+    return (
+        <div className="step-indicator-container">
+            <div className="step-indicator">
+                {steps.map((step, index) => (
+                    <div key={step.number}>
+                        <div className={`step-item ${currentStep === step.number ? 'active' : ''} ${currentStep > step.number ? 'completed' : ''}`}>
+                            <div className="step-circle">
+                                {currentStep > step.number ? (
+                                    <i className="bi bi-check"></i>
+                                ) : (
+                                    step.number
+                                )}
+                            </div>
+                            <div className="step-label">{step.label}</div>
+                        </div>
+                        {index < steps.length - 1 && (
+                            <div className={`step-line ${currentStep > step.number ? 'completed' : ''}`}></div>
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 }

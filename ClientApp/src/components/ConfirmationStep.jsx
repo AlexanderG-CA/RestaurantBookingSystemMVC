@@ -1,13 +1,13 @@
-﻿import { useBooking } from '../BookingContext.js';
+import { useBooking } from '../context/BookingContext';
 
 export function ConfirmationStep() {
     const { bookingConfirmation, resetBooking } = useBooking();
 
     if (!bookingConfirmation) {
-        return React.createElement(
-            'div',
-            { className: 'booking-step' },
-            React.createElement('p', null, 'No booking confirmation available.')
+        return (
+            <div className="booking-step">
+                <p>No booking confirmation available.</p>
+            </div>
         );
     }
 
@@ -15,151 +15,96 @@ export function ConfirmationStep() {
         resetBooking();
     };
 
-    return React.createElement(
-        'div',
-        { className: 'booking-step confirmation-step' },
-        React.createElement(
-            'div',
-            { className: 'success-animation' },
-            React.createElement(
-                'div',
-                { className: 'success-checkmark' },
-                React.createElement('i', { className: 'bi bi-check-circle-fill' })
-            )
-        ),
-        React.createElement('h2', { className: 'step-title text-center' }, 'Booking Confirmed!'),
-        React.createElement(
-            'p',
-            { className: 'step-description text-center' },
-            'Thank you for your reservation at Tumba Bistro'
-        ),
-        React.createElement(
-            'div',
-            { className: 'confirmation-card' },
-            React.createElement('h4', { className: 'mb-4' }, 'Booking Details'),
-            React.createElement(
-                'div',
-                { className: 'confirmation-details' },
-                React.createElement(
-                    'div',
-                    { className: 'detail-row' },
-                    React.createElement(
-                        'div',
-                        { className: 'detail-label' },
-                        React.createElement('i', { className: 'bi bi-person-fill me-2' }),
-                        'Name'
-                    ),
-                    React.createElement('div', { className: 'detail-value' }, bookingConfirmation.customerName)
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'detail-row' },
-                    React.createElement(
-                        'div',
-                        { className: 'detail-label' },
-                        React.createElement('i', { className: 'bi bi-telephone-fill me-2' }),
-                        'Phone'
-                    ),
-                    React.createElement('div', { className: 'detail-value' }, bookingConfirmation.customerPhone)
-                ),
-                React.createElement('div', { className: 'detail-divider' }),
-                React.createElement(
-                    'div',
-                    { className: 'detail-row' },
-                    React.createElement(
-                        'div',
-                        { className: 'detail-label' },
-                        React.createElement('i', { className: 'bi bi-calendar3 me-2' }),
-                        'Date'
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'detail-value' },
-                        new Date(bookingConfirmation.date).toLocaleDateString('en-US', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        })
-                    )
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'detail-row' },
-                    React.createElement(
-                        'div',
-                        { className: 'detail-label' },
-                        React.createElement('i', { className: 'bi bi-clock-fill me-2' }),
-                        'Time'
-                    ),
-                    React.createElement('div', { className: 'detail-value' }, bookingConfirmation.time)
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'detail-row' },
-                    React.createElement(
-                        'div',
-                        { className: 'detail-label' },
-                        React.createElement('i', { className: 'bi bi-people-fill me-2' }),
-                        'Guests'
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'detail-value' },
-                        bookingConfirmation.guests,
-                        ' ',
-                        bookingConfirmation.guests === 1 ? 'guest' : 'guests'
-                    )
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'detail-row' },
-                    React.createElement(
-                        'div',
-                        { className: 'detail-label' },
-                        React.createElement('i', { className: 'bi bi-square-fill me-2' }),
-                        'Table'
-                    ),
-                    React.createElement(
-                        'div',
-                        { className: 'detail-value' },
-                        `Table ${bookingConfirmation.table.tableNumber}`
-                    )
-                )
-            )
-        ),
-        React.createElement(
-            'div',
-            { className: 'confirmation-info' },
-            React.createElement(
-                'div',
-                { className: 'alert alert-info' },
-                React.createElement('i', { className: 'bi bi-info-circle me-2' }),
-                'You will receive a confirmation call shortly. Please arrive 5-10 minutes before your reservation time.'
-            )
-        ),
-        React.createElement(
-            'div',
-            { className: 'confirmation-actions' },
-            React.createElement(
-                'button',
-                {
-                    type: 'button',
-                    className: 'btn btn-primary btn-lg',
-                    onClick: handleNewBooking
-                },
-                React.createElement('i', { className: 'bi bi-plus-circle me-2' }),
-                'Make Another Booking'
-            ),
-            React.createElement(
-                'a',
-                {
-                    href: '/',
-                    className: 'btn btn-outline-secondary btn-lg'
-                },
-                React.createElement('i', { className: 'bi bi-house me-2' }),
-                'Back to Home'
-            )
-        )
+    return (
+        <div className="booking-step confirmation-step">
+            <div className="success-animation">
+                <div className="success-checkmark">
+                    <i className="bi bi-check-circle-fill"></i>
+                </div>
+            </div>
+            <h2 className="step-title text-center">Table Available!</h2>
+            <p className="step-description text-center">
+                Great news! Your table is available at Tumba Bistro
+            </p>
+            <div className="confirmation-card">
+                <h4 className="mb-4">Availability Details</h4>
+                <div className="confirmation-details">
+                    <div className="detail-row">
+                        <div className="detail-label">
+                            <i className="bi bi-person-fill me-2"></i>
+                            Name
+                        </div>
+                        <div className="detail-value">{bookingConfirmation.customerName}</div>
+                    </div>
+                    <div className="detail-row">
+                        <div className="detail-label">
+                            <i className="bi bi-telephone-fill me-2"></i>
+                            Phone
+                        </div>
+                        <div className="detail-value">{bookingConfirmation.customerPhone}</div>
+                    </div>
+                    <div className="detail-divider"></div>
+                    <div className="detail-row">
+                        <div className="detail-label">
+                            <i className="bi bi-calendar3 me-2"></i>
+                            Date
+                        </div>
+                        <div className="detail-value">
+                            {new Date(bookingConfirmation.date).toLocaleDateString('en-US', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
+                        </div>
+                    </div>
+                    <div className="detail-row">
+                        <div className="detail-label">
+                            <i className="bi bi-clock-fill me-2"></i>
+                            Time
+                        </div>
+                        <div className="detail-value">{bookingConfirmation.time}</div>
+                    </div>
+                    <div className="detail-row">
+                        <div className="detail-label">
+                            <i className="bi bi-people-fill me-2"></i>
+                            Guests
+                        </div>
+                        <div className="detail-value">
+                            {bookingConfirmation.guests} {bookingConfirmation.guests === 1 ? 'guest' : 'guests'}
+                        </div>
+                    </div>
+                    <div className="detail-row">
+                        <div className="detail-label">
+                            <i className="bi bi-square-fill me-2"></i>
+                            Table
+                        </div>
+                        <div className="detail-value">
+                            Table {bookingConfirmation.table.tableNumber}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="confirmation-info">
+                <div className="alert alert-info">
+                    <i className="bi bi-info-circle me-2"></i>
+                    To complete your booking, please contact us at +46 8 530 680 00 or visit the restaurant. This is a table availability check only - no booking has been created yet.
+                </div>
+            </div>
+            <div className="confirmation-actions">
+                <button
+                    type="button"
+                    className="btn btn-primary btn-lg"
+                    onClick={handleNewBooking}
+                >
+                    <i className="bi bi-plus-circle me-2"></i>
+                    Check Another Time
+                </button>
+                <a href="/" className="btn btn-outline-secondary btn-lg">
+                    <i className="bi bi-house me-2"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
     );
 }

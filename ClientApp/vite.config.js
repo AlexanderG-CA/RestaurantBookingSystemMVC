@@ -2,7 +2,15 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-    plugins: [react()],
+    plugins: [
+        react({
+            jsxRuntime: 'automatic',
+            jsxImportSource: undefined,
+            babel: {
+                plugins: []
+            }
+        })
+    ],
     root: '.',
     publicDir: 'public',
     build: {
@@ -11,12 +19,9 @@ export default defineConfig({
     },
     server: {
         port: 3000,
-        host: '0.0.0.0',  // Allow external connections
+        cors: true,
         strictPort: true,
-        cors: {
-            origin: ['https://localhost:7161', 'http://localhost:7161'],  // Allow your ASP.NET origins
-            credentials: true
-        },
+        origin: 'http://localhost:3000',
         proxy: {
             '/Home': {
                 target: 'https://localhost:7161',

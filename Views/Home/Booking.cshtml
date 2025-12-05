@@ -4,23 +4,64 @@
 
 <div id="root"></div>
 
-<!-- React Refresh preamble (REQUIRED by @@vitejs/plugin-react) -->
+<!-- Vite Dev Server Scripts -->
 <script type="module">
-    import RefreshRuntime from 'http://localhost:3000/@@react-refresh'
-    RefreshRuntime.injectIntoGlobalHook(window)
-    window.$RefreshReg$ = () => {}
-    window.$RefreshSig$ = () => (type) => type
-    window.__vite_plugin_react_preamble_installed__ = true
+    // Error handling
+    window.addEventListener('error', (e) => {
+        console.error('Page Error:', e.message);
+        const root = document.getElementById('root');
+        if (root && !root.hasChildNodes()) {
+            root.innerHTML = `
+                <div style="padding: 40px; text-align: center; color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; margin: 20px;">
+                    <h2> React App Failed to Load</h2>
+                    <p><strong>Error:</strong> ${e.message}</p>
+                    <hr style="margin: 20px 0;">
+                    <h3>Troubleshooting Steps:</h3>
+                    <ol style="text-align: left; display: inline-block; margin: 20px auto;">
+                        <li>Make sure Vite dev server is running at <strong>http://localhost:3000</strong></li>
+                        <li>In PowerShell, run:<br><code style="background: #fff; padding: 5px; display: block; margin: 5px 0;">cd ClientApp</code><code style="background: #fff; padding: 5px; display: block;">npm run dev</code></li>
+                        <li>Refresh this page after starting Vite server</li>
+                    </ol>
+                </div>
+            `;
+        }
+    });
+
+    // Check if Vite server is accessible
+    fetch('http://localhost:3000/@@vite/client')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Vite server not responding');
+            }
+            console.log(' Vite server is running');
+        })
+        .catch(err => {
+            console.error(' Cannot connect to Vite server:', err);
+            const root = document.getElementById('root');
+            if (root) {
+                root.innerHTML = `
+                    <div style="padding: 40px; text-align: center; color: #856404; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; margin: 20px;">
+                        <h2> Vite Dev Server Not Running</h2>
+                        <p>The React development server is not accessible at <strong>http://localhost:3000</strong></p>
+                        <hr style="margin: 20px 0;">
+                        <h3>To fix this:</h3>
+                        <ol style="text-align: left; display: inline-block; margin: 20px auto;">
+                            <li>Open PowerShell</li>
+                            <li>Navigate to ClientApp:<br><code style="background: #fff; padding: 5px; display: block; margin: 5px 0;">cd C:\\Users\\Alexa\\source\\repos\\RestaurantBookingSystemMVC\\ClientApp</code></li>
+                            <li>Start Vite:<br><code style="background: #fff; padding: 5px; display: block; margin: 5px 0;">npm run dev</code></li>
+                            <li>Refresh this page</li>
+                        </ol>
+                    </div>
+                `;
+            }
+        });
 </script>
 
-<!-- Vite HMR client -->
 <script type="module" src="http://localhost:3000/@@vite/client"></script>
-
-<!-- Your React app entry point -->
 <script type="module" src="http://localhost:3000/src/main.jsx"></script>
 
 @section Scripts {
     <script>
-        console.log('Booking page loaded - React Refresh preamble installed');
+        console.log('Booking page loaded - waiting for React app...');
     </script>
 }

@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-const BookingContext = createContext();
+const BookingContext = createContext(undefined);
 
 export function BookingProvider({ children }) {
     const [currentStep, setCurrentStep] = useState(1);
@@ -21,13 +21,8 @@ export function BookingProvider({ children }) {
         setBookingData(prev => ({ ...prev, ...data }));
     };
 
-    const nextStep = () => {
-        setCurrentStep(prev => Math.min(prev + 1, 4));
-    };
-
-    const prevStep = () => {
-        setCurrentStep(prev => Math.max(prev - 1, 1));
-    };
+    const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 4));
+    const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
     const resetBooking = () => {
         setCurrentStep(1);
@@ -44,24 +39,26 @@ export function BookingProvider({ children }) {
         setBookingConfirmation(null);
     };
 
-    const value = {
-        currentStep,
-        bookingData,
-        availableTables,
-        loading,
-        error,
-        bookingConfirmation,
-        updateBookingData,
-        setAvailableTables,
-        setLoading,
-        setError,
-        setBookingConfirmation,
-        nextStep,
-        prevStep,
-        resetBooking
-    };
-
-    return <BookingContext.Provider value={value}>{children}</BookingContext.Provider>;
+    return (
+        <BookingContext.Provider value={{
+            currentStep,
+            bookingData,
+            availableTables,
+            loading,
+            error,
+            bookingConfirmation,
+            updateBookingData,
+            setAvailableTables,
+            setLoading,
+            setError,
+            setBookingConfirmation,
+            nextStep,
+            prevStep,
+            resetBooking
+        }}>
+            {children}
+        </BookingContext.Provider>
+    );
 }
 
 export function useBooking() {
@@ -71,4 +68,3 @@ export function useBooking() {
     }
     return context;
 }
-
